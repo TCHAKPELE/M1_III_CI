@@ -1,19 +1,19 @@
 
  version: 2.1
-  jobs:
+ jobs:
     install:
-     docker:
-       - image: circleci/node:dubnium-browsers
-     working_directory: ~/repo
-     steps:
-       - checkout
-       - restore_cache:
+      docker:
+        - image: circleci/node:dubnium-browsers
+      working_directory: ~/repo
+      steps:
+        - checkout
+        - restore_cache:
           keys:
             - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
             # fallback to using the latest cache if no exact match is found
             - dependencies-
-       - run: yarn global add node-gyp && yarn install
-       - save_cache:
+        - run: yarn global add node-gyp && yarn install
+        - save_cache:
            paths:
-             - node_modules
-           key: $CACHE_VERSION-dependencies-{{ checksum "package.json" }}
+              - node_modules
+            key: $CACHE_VERSION-dependencies-{{ checksum "package.json" }}
