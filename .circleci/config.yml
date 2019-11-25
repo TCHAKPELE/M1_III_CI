@@ -20,24 +20,24 @@
      
     lint:
       steps:
-         -checkout
-         - restore_cache:
+        - checkout
+        - restore_cache:
             keys:
               - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
               # fallback to using the latest cache if no exact match is found
               - dependencies-
-         -run: yarn lint
-         -run: yarn format:check
+        -run: yarn lint
+        -run: yarn format:check
 
-     unit:
-       steps:
-         -checkout
-         - restore_cache:
+    unit:
+      steps:
+        - checkout
+        - restore_cache:
             keys:
               - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
               # fallback to using the latest cache if no exact match is found
               - dependencies-
-         -run: yarn test:ci
+        -run: yarn test:ci
        
 workflow:
   version:2
