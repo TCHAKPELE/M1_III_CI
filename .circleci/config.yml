@@ -1,8 +1,8 @@
  version: 2.1
-  jobs:
-    build:
-      docker: 
-        - image: circleci/node:dubnium
+   jobs:
+     build:
+       docker: 
+         - image: circleci/node:dubnium
       steps:
-        - checkout # check out the code in the project directory
-        - run: echo "hello world"
+         - checkout # check out the code in the project directory
+         - run: echo "hello world"
