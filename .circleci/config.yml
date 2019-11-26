@@ -39,10 +39,10 @@
               - dependencies-
         - run: yarn test:ci
        
-workflow:
-  version:2
-  build-lint-and-unit:
-    jobs:
-      -build
-      -lint
-      -unit
+ workflow:
+   version:2
+   build-lint-and-unit:
+     jobs:
+       - build
+       - lint
+       - unit
