@@ -44,4 +44,6 @@ workflow:
     jobs:
       - build
       - lint
+        requires:build
       - unit
+        requires:build
