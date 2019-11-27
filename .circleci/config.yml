@@ -41,6 +41,18 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - dependencies-
       - run: yarn test:ci
+   
+  e2e-test:
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+            # fallback to using the latest cache if no exact match is found
+            - dependencies-
+      - run: yarn test:e2e
+
+
 
 workflow:
   version: 2
@@ -53,4 +65,6 @@ workflow:
       - test1:
           requires:
             - build
-      
+      - e2e-test:
+          requires:
+            - test
