@@ -18,6 +18,8 @@ jobs:
           key: $CACHE_VERSION-dependencies-{{ checksum "package.json" }}
 
   test:
+    docker:
+      - image: circleci/node:dubnium-browsers
     steps:
       - checkout
       - restore_cache:
@@ -29,6 +31,8 @@ jobs:
       - run: yarn format:check
 
   test1:
+    docker:
+      - image: circleci/node:dubnium-browsers
     steps:
       - checkout
       - restore_cache:
