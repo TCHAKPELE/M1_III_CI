@@ -45,6 +45,13 @@ jobs:
   e2e-test:
     docker:
       - image: circleci/node:dubnium-browsers
+      - image: circleci/postgres:9.6-alpine
+        environment:
+          POSTGRES_USER: tpCi
+          POSTGRES_DB: psdb
+          POSTGRES_PASSWORD: someNotSecurePassword
+
+    working_directory: ~/repo
     steps:
       - checkout
       - restore_cache:
@@ -54,11 +61,53 @@ jobs:
             - dependencies-
 
       - run:
-          name: Run unit tests
+          command: yarn test:e2e
           environment:
-            DB_URL: {{ .Environment.DATABASE_URL}}
+             DATABASE_URL: postgres://tpCi:someNotSecurePassword@localhost:5432/psdb
+             JWT_SECRET: 'some string yo want'
+             API_PORT: '3000'
+             API_HOST: localhost
+             API_PROTOCOL: http
+
+
+  build_and_push_docker:
+    docker:
+      - image: docker:17.05.0-ce-git
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build and push Docker image
+          command: |
+            docker login -u $DOCKER_LOGIN -p $DOCKER_PWD
+            docker build --cache-from=app -t app:latest .
+            docker tag  app $DOCKER_LOGIN/my-awesome-ci-expr:$CIRCLE_BUILD_NUM
+            docker tag  app $DOCKER_LOGIN/my-awesome-ci-expr:latest
+            docker push $DOCKER_LOGIN/my-awesome-ci-expr:$CIRCLE_BUILD_NUM
+            docker push $DOCKER_LOGIN/my-awesome-ci-expr:latest
             
-      - run: yarn test:e2e
+  
+  build_doc:
+    docker:
+      - image: circleci/node:dubnium
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
+
+            - dependencies-
+
+      - run: yarn doc:build
+
+      - store_artifacts:
+          path: doc-server
+      
 
 
 
@@ -76,3 +125,9 @@ workflow:
       - e2e-test:
           requires:
             - test
+      - build_and_push_docker:
+          requires:
+            -build
+      - build_doc:
+          requires:
+            -build
