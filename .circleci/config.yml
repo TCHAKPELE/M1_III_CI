@@ -43,7 +43,10 @@ workflow:
   build_lint_and_unit:
     jobs:
       - build
-      - lint
-      - unit
-    requires:
-      - build
+      - lint:
+          requires:
+            - build
+      - unit:
+          requires:
+            - build
+      
