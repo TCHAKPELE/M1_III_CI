@@ -43,6 +43,8 @@ jobs:
       - run: yarn test:ci
    
   e2e-test:
+    docker:
+      - image: circleci/node:dubnium-browsers
     steps:
       - checkout
       - restore_cache:
@@ -50,6 +52,12 @@ jobs:
             - dependencies-{{ checksum "package.json" }}-{{ .Environment.CACHE_VERSION }}
             # fallback to using the latest cache if no exact match is found
             - dependencies-
+
+      - run:
+          name: Run unit tests
+          environment:
+            DB_URL: {{ .Environment.DATABASE_URL}}
+            
       - run: yarn test:e2e
 
 
